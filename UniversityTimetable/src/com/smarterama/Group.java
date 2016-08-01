@@ -14,8 +14,8 @@ public class Group {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void addStudent(){
-    	students.add(new Student());
+	public void addStudent(Student student){
+    	students.add(student);
     }
     public void deleteStudent(Student studentMustBeRemooved){
     	if(students.isEmpty() == false){
@@ -29,5 +29,7 @@ public class Group {
     			}
     		}
     	}
+    	
     }
+	
 }

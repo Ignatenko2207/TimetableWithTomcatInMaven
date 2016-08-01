@@ -1,14 +1,13 @@
 package com.smarterama;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Man {
 	
 	String name;
 	String surname;
-	Date dateOfBirth;
-	
-
+	Calendar dateOfBirth;
 	
 	public String getName() {
 		return name;
@@ -22,11 +21,11 @@ public class Man {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	public Date getDateOfBirth() {
+	public Calendar getDateOfBirth() {
 		return dateOfBirth;
 	}
-	public void setDateOfBirth(Date dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	public void setDateOfBirth(int year, int month, int day) {
+		this.dateOfBirth = new GregorianCalendar(year, month, day);
 	}	
 	
 }

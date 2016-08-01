@@ -8,5 +8,6 @@ public class Student extends Man {
     public int getCourseOfStudy(){
         return courseOfStudy;
 	}
+    
 
 }

@@ -1,6 +1,7 @@
 package com.smarterama;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class Lesson {
 
@@ -8,14 +9,14 @@ public class Lesson {
 	Teacher teacher = new Teacher();
 	Group group = new Group();
 	public int room;
-	Date startOfLesson = new Date();
+	Calendar startOfLesson;
 	int durationOfLesson;
 	
 	public int getDurationOfLesson() {
 		return durationOfLesson;
 	}
-	public void setDurationOfLesson(int durationOfLesson) {
-		this.durationOfLesson = durationOfLesson;
+	public void setDurationOfLesson(int durationOfLessonInMinutes) {
+		this.durationOfLesson = durationOfLessonInMinutes;
 	}
 	public String getName() {
 		return name;
@@ -41,11 +42,11 @@ public class Lesson {
 	public void setRoom(int room) {
 		this.room = room;
 	}
-	public Date getStartOfLesson() {
+	public Calendar getStartOfLesson() {
 		return startOfLesson;
 	}
-	public void setStartOfLesson(Date startOfLesson) {
-		this.startOfLesson = startOfLesson;
+	public void setStartOfLesson(int year, int month, int day, int hour, int minute, int second) {
+		this.startOfLesson = new GregorianCalendar(year, (month-1), day, hour, minute, second);
 	}
 	
 }

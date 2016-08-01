@@ -14,8 +14,8 @@ public class Faculty {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public void addGroup(){
-    	groups.add(new Group());
+	public void addGroup(Group group){
+    	groups.add(group);
     }
     public void deleteGroup(Group group){
     	if(groups.isEmpty() == false){
