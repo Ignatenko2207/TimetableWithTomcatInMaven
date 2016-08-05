@@ -1,4 +1,4 @@
-package com.smarterama;
+package com.smarterama.timetable.tests;
 
 import static org.junit.Assert.*;
 
@@ -7,6 +7,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.junit.Test;
+
+import com.smarterama.timetable.model.Lesson;
+import com.smarterama.timetable.model.Timetable;
 
 public class TimetableTest {
 

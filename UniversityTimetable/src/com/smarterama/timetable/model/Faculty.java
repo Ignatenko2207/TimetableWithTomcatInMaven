@@ -1,11 +1,11 @@
-package com.smarterama;
+package com.smarterama.timetable.model;
 
 import java.util.ArrayList;
 
 public class Faculty {
 	
 	String name = new String();
-	ArrayList<Group> groups = new ArrayList<Group>();
+	public ArrayList<Group> groups = new ArrayList<Group>();
 	
 	
     public String getName() {

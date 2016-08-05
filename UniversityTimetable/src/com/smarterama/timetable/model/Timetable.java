@@ -1,13 +1,14 @@
-package com.smarterama;
+package com.smarterama.timetable.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Timetable {
 
-	int period;
-	ArrayList<Lesson> lessons = new ArrayList<Lesson>();
+	public int period;
+	public ArrayList<Lesson> lessons = new ArrayList<Lesson>();
+	public ArrayList<Lesson> lessonsForWeek = getLessonsForWeek(lessons, period);
+	public ArrayList<Lesson> lessonsForMonth = getLessonsForMonth(lessons, period);
 	
 	public static ArrayList<Lesson> getLessonsForMonth(ArrayList<Lesson> lessons, int period) {
 			

@@ -1,4 +1,4 @@
-package com.smarterama;
+package com.smarterama.timetable.model;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -6,11 +6,11 @@ import java.util.GregorianCalendar;
 public class Lesson {
 
 	String name = new String();
-	Teacher teacher = new Teacher();
-	Group group = new Group();
+	public Teacher teacher = new Teacher();
+	public Group group = new Group();
 	public int room;
 	Calendar startOfLesson;
-	int durationOfLesson;
+	public int durationOfLesson;
 	
 	public int getDurationOfLesson() {
 		return durationOfLesson;

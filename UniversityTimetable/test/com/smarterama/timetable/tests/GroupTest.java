@@ -1,9 +1,12 @@
-package com.smarterama;
+package com.smarterama.timetable.tests;
 
 import static org.junit.Assert.*;
 
 import java.util.Date;
 import org.junit.Test;
+
+import com.smarterama.timetable.model.Group;
+import com.smarterama.timetable.model.Student;
 
 public class GroupTest {
 	

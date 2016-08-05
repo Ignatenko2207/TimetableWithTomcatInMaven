@@ -1,4 +1,4 @@
-package com.smarterama;
+package com.smarterama.timetable.model;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

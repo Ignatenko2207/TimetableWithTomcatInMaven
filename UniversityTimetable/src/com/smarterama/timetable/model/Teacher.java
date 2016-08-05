@@ -1,8 +1,8 @@
-package com.smarterama;
+package com.smarterama.timetable.model;
 
 public class Teacher extends Man{
 	
-	String academicDegree = new String();
+	public String academicDegree = new String();
 
 	public String getAcademicDegree() {
 		return academicDegree;
