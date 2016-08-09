@@ -1,4 +1,4 @@
-package com.smarterama.timetable.tests;
+package com.smarterama.timetable.model;
 
 import static org.junit.Assert.*;
 
