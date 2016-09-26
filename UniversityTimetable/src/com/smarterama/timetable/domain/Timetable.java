@@ -1,4 +1,4 @@
-package com.smarterama.timetable.model;
+package com.smarterama.timetable.domain;
 
 import java.util.ArrayList;
 import java.util.Calendar;

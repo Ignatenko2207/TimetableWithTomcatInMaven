@@ -1,13 +1,13 @@
-package com.smarterama.timetable.model;
+package com.smarterama.timetable.domain;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Man {
 	
-	String name;
-	String surname;
-	Calendar dateOfBirth;
+	public String name;
+	public String surname;
+	public Calendar dateOfBirth;
 	
 	public String getName() {
 		return name;

@@ -1,10 +1,10 @@
-package com.smarterama.timetable.model;
+package com.smarterama.timetable.domain;
 
 import java.util.ArrayList;
 
 public class Faculty {
 	
-	String name = new String();
+	public String name = new String();
 	public ArrayList<Group> groups = new ArrayList<Group>();
 	
 	

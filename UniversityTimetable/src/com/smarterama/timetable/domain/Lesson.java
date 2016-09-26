@@ -1,15 +1,15 @@
-package com.smarterama.timetable.model;
+package com.smarterama.timetable.domain;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Lesson {
 
-	String name = new String();
+	public String name = new String();
 	public Teacher teacher = new Teacher();
 	public Group group = new Group();
 	public int room;
-	Calendar startOfLesson;
+	public Calendar startOfLesson;
 	public int durationOfLesson;
 	
 	public int getDurationOfLesson() {
