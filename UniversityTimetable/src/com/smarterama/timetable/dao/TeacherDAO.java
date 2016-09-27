@@ -21,8 +21,7 @@ public class TeacherDAO {
 			if(n==1){
 				log.log(Level.FINE, "Teacher "+surname+" wasn't created! This teacher already exists!!!");
 				return;
-			}
-			else{
+			}else{
 				log.log(Level.FINE, "Teacher "+surname+" was created! The same teacher added!");
 			}
 			
@@ -40,8 +39,7 @@ public class TeacherDAO {
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 			}
 			try {
@@ -53,14 +51,17 @@ public class TeacherDAO {
 				statement.executeUpdate();
 								
 				log.log(Level.FINE, "New teacher "+name+" "+surname+" added to DB");
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 			}
-		}
-		finally{
+		}finally{
 			try {
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 			}
@@ -68,6 +69,8 @@ public class TeacherDAO {
 	}
 		
 	public static Teacher getTeacher(String name, String surname, Calendar date, String degree){
+		
+		Teacher foundTeacher = new Teacher(); 
 		
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -86,7 +89,7 @@ public class TeacherDAO {
 			}
 			else{
 				log.log(Level.WARNING, "Connection is not established!!!");
-				return null;
+				throw new RuntimeException("Teacher has not found.");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -96,39 +99,41 @@ public class TeacherDAO {
 					if(rSet.getString(1).equals(name)){
 						if(rSet.getString(4).equals(degree)){
 							log.log(Level.FINE, "Teacher "+surname+" has found.");
-							Teacher foundTeacher = new Teacher();
 							foundTeacher.name = rSet.getString(1);
 							foundTeacher.surname = rSet.getString(2);
 							foundTeacher.dateOfBirth = date;
 							foundTeacher.academicDegree = rSet.getString(4);
 							return foundTeacher;
-						}
-						else{
+						}else{
 							log.log(Level.FINE, "Teacher "+surname+" has not found.");
-							return null;
+							throw new RuntimeException("Teacher has not found.");
 						}
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Teacher "+surname+" has not found.");
-						return null;
+						throw new RuntimeException("Teacher has not found.");
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
-				return null;
+				throw new RuntimeException("Teacher has not found.");
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(rSet!=null)rSet.close();
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
+				if(rSet!=null){
+					rSet.close();
+				}
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
-				return null;
+				throw new RuntimeException("Teacher has not found.");
 			}
 		}
-		return null;
+		throw new RuntimeException("Teacher has not found.");
 	}
 	
 	public static int getID(String name, String surname, Calendar date, String degree){
@@ -157,8 +162,7 @@ public class TeacherDAO {
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return teacherID;
 			}
@@ -172,27 +176,30 @@ public class TeacherDAO {
 							log.log(Level.FINE, "Teacher "+surname+" has found.");
 							teacherID = rSet.getInt(1);
 							return teacherID;					
-						}
-						else{
+						}else{
 							log.log(Level.FINE, "Teacher "+surname+" has not found.");
 							return teacherID;
 						}
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Teacher "+surname+" has not found.");
 						return teacherID;
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return teacherID;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(rSet!=null)rSet.close();
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
+				if(rSet!=null){
+					rSet.close();
+				}
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return teacherID;
@@ -229,8 +236,7 @@ public class TeacherDAO {
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return;
 			}
@@ -256,8 +262,7 @@ public class TeacherDAO {
 							connection2 = ConnectionToDB.getConnectionToDB();
 							if(connection2 != null){
 								log.log(Level.FINE, "Connection for update is established.");
-							}
-							else{
+							}else{
 								log.log(Level.WARNING, "Connection for update is not established!!!");
 								return;
 							}
@@ -265,13 +270,11 @@ public class TeacherDAO {
 							statement2.executeUpdate();
 							
 							
-						}
-						else{
+						}else{
 							log.log(Level.FINE, "Teacher "+surname+" has not found.");
 							return;
 						}
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Teacher "+surname+" has not found.");
 						return;
 					}
@@ -280,14 +283,23 @@ public class TeacherDAO {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(statement2!=null)statement1.close();
-			    if(connection2!=null)connection1.close();
-				if(rSet1!=null)rSet1.close();
-			    if(statement1!=null)statement1.close();
-			    if(connection1!=null)connection1.close();
+				if(statement2!=null){
+					statement1.close();
+				}
+			    if(connection2!=null){
+			    	connection1.close();
+			    }
+				if(rSet1!=null){
+					rSet1.close();
+				}
+			    if(statement1!=null){
+			    	statement1.close();
+			    }
+			    if(connection1!=null){
+			    	connection1.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
@@ -322,8 +334,7 @@ public class TeacherDAO {
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return;
 			}
@@ -342,8 +353,7 @@ public class TeacherDAO {
 							if(n==1){
 								log.log(Level.FINE, "Teacher "+surname+" wasn't deleted!");
 								return;
-							}
-							else{
+							}else{
 								log.log(Level.FINE, "Teacher "+surname+" deleted");
 							}
 									
@@ -352,20 +362,17 @@ public class TeacherDAO {
 							connection2 = ConnectionToDB.getConnectionToDB();
 							if(connection2 != null){
 								log.log(Level.FINE, "Connection for update is established.");
-							}
-							else{
+							}else{
 								log.log(Level.WARNING, "Connection for update is not established!!!");
 								return;
 							}
 							statement2 = connection2.prepareStatement(sql2);
 							statement2.executeUpdate();
-						}
-						else{
+						}else{
 							log.log(Level.FINE, "Teacher "+surname+" has not found.");
 							return;
 						}
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Teacher "+surname+" has not found.");
 						return;
 					}
@@ -374,14 +381,23 @@ public class TeacherDAO {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(statement2!=null)statement1.close();
-			    if(connection2!=null)connection1.close();
-				if(rSet1!=null)rSet1.close();
-			    if(statement1!=null)statement1.close();
-			    if(connection1!=null)connection1.close();
+				if(statement2!=null){
+					statement1.close();
+				}
+			    if(connection2!=null){
+			    	connection1.close();
+			    }
+				if(rSet1!=null){
+					rSet1.close();
+				}
+			    if(statement1!=null){
+			    	statement1.close();
+			    }
+			    if(connection1!=null){
+			    	connection1.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;

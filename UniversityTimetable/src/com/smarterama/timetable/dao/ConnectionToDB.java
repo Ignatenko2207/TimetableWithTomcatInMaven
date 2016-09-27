@@ -14,18 +14,17 @@ public class ConnectionToDB {
 	private static Logger log = Logger.getLogger(ConnectionToDB.class.getName());
 	
 	public static Connection getConnectionToDB(){
+		Connection connection = null;
 		try{
-			Connection connection = DriverManager.getConnection(DBURL, DBUser, DBUserPassword);
+			connection = DriverManager.getConnection(DBURL, DBUser, DBUserPassword);
 			if(connection!=null){
 				return connection;
+			}else{
+				throw new NullPointerException("connection = null");
 			}
-			else{
-				return null;
-			}
-		}
-		catch(Exception e){
+		}catch(Exception e){
 			log.log(Level.WARNING, e.getMessage());
-			return null;	
+			throw new NullPointerException("connection = null");	
 		}
 	}
 }

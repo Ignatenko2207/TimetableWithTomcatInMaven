@@ -22,8 +22,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			if(n==1){
 				log.log(Level.FINE, "Faculty "+name+" wasn't created! This faculty already exists!!!");
 				return;
-			}
-			else{
+			}else{
 				log.log(Level.FINE, "Faculty "+name+" was created! The same faculty added!");
 			}
 		}
@@ -37,8 +36,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 			}
 			try {
@@ -47,21 +45,26 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				statement.executeUpdate();
 								
 				log.log(Level.FINE, "New faculty "+name+" added to DB");
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 			}
-		}
-		finally{
+		}finally{
 			try {
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
-			} catch (SQLException e) {
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 			}
 		}
 	}
 	
 	public static Faculty getFaculty(String name){
+		
+		Faculty foundFaculty = new Faculty();
 		
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -75,10 +78,9 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
-				return null;
+				throw new RuntimeException("Faculty has not found.");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -87,31 +89,35 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				while(rSet.next()){
 					if(rSet.wasNull() == false){
 						log.log(Level.FINE, "Faculty "+name+" has found.");
-						Faculty foundFaculty = new Faculty();
+						
 						foundFaculty.name = rSet.getString(1);
 						return foundFaculty;
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Faculty "+name+" has not found.");
-						return null;
+						throw new RuntimeException("Faculty has not found.");
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
-				return null;
+				throw new RuntimeException("Faculty has not found.");
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(rSet!=null)rSet.close();
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
-			} catch (SQLException e) {
+				if(rSet!=null){
+					rSet.close();
+				}
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
-				return null;
+				throw new RuntimeException("Faculty has not found.");
 			}
 		}
-		return null;
+		throw new RuntimeException("Faculty has not found.");
 	}
 
 	public static int getID(String name){
@@ -130,8 +136,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return facultyID;
 			}
@@ -143,23 +148,27 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 					if(rSet.wasNull() == false){
 						log.log(Level.FINE, "Faculty "+name+" has found.");
 						facultyID = rSet.getInt(1);
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Faculty "+name+" has not found.");
 						return facultyID;
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return facultyID;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(rSet!=null)rSet.close();
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
-			} catch (SQLException e) {
+				if(rSet!=null){
+					rSet.close();
+				}
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return facultyID;
 			}
@@ -191,8 +200,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return;
 			}
@@ -210,32 +218,39 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
 							log.log(Level.FINE, "Connection for update is established.");
-						}
-						else{
+						}else{
 							log.log(Level.WARNING, "Connection for update is not established!!!");
 							return;
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Faculty "+name+" has not found.");
 						return;
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(statement2!=null)statement1.close();
-			    if(connection2!=null)connection1.close();
-				if(rSet1!=null)rSet1.close();
-			    if(statement1!=null)statement1.close();
-			    if(connection1!=null)connection1.close();
-			} catch (SQLException e) {
+				if(statement2!=null){
+					statement1.close();
+				}
+			    if(connection2!=null){
+			    	connection1.close();
+			    }
+				if(rSet1!=null){
+					rSet1.close();
+				}
+			    if(statement1!=null){
+			    	statement1.close();
+			    }
+			    if(connection1!=null){
+			    	connection1.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}
@@ -266,8 +281,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return;
 			}
@@ -284,8 +298,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 						if(n==1){
 							log.log(Level.FINE, "Faculty "+name+" wasn't deleted!");
 							return;
-						}
-						else{
+						}else{
 							log.log(Level.FINE, "Faculty "+name+" deleted");
 						}
 						
@@ -294,32 +307,39 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
 							log.log(Level.FINE, "Connection for update is established.");
-						}
-						else{
+						}else{
 							log.log(Level.WARNING, "Connection for update is not established!!!");
 							return;
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Faculty "+name+" has not found.");
 						return;
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(statement2!=null)statement1.close();
-			    if(connection2!=null)connection1.close();
-				if(rSet1!=null)rSet1.close();
-			    if(statement1!=null)statement1.close();
-			    if(connection1!=null)connection1.close();
-			} catch (SQLException e) {
+				if(statement2!=null){
+					statement1.close();
+				}
+			    if(connection2!=null){
+			    	connection1.close();
+			    }
+				if(rSet1!=null){
+					rSet1.close();
+				}
+			    if(statement1!=null){
+			    	statement1.close();
+			    }
+			    if(connection1!=null){
+			    	connection1.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}

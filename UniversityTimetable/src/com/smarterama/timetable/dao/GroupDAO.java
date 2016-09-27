@@ -22,8 +22,7 @@ public class GroupDAO {
 			if(n==1){
 				log.log(Level.FINE, "Group "+name+" wasn't created! This group already exists!!!");
 				return;
-			}
-			else{
+			}else{
 				log.log(Level.FINE, "Group "+name+" was created! The same group added!");
 			}
 		}
@@ -37,8 +36,7 @@ public class GroupDAO {
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 			}
 			try {
@@ -48,15 +46,18 @@ public class GroupDAO {
 				statement.executeUpdate();
 								
 				log.log(Level.FINE, "New group "+name+" added to DB");
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 			}
-		}
-		finally{
+		}finally{
 			try {
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
-			} catch (SQLException e) {
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 			}
 		}
@@ -64,22 +65,23 @@ public class GroupDAO {
 	
 	public static Group getGroup(String name){
 		
+		Group foundGroup = new Group();
+		
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet rSet = null;
 		
 		String sql = "SELECT name "
-				+ "FROM groups "
-				+ "WHERE name='"+name+"'";
+					+ "FROM groups "
+					+ "WHERE name='"+name+"'";
 
 		try{
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
-				return null;
+				throw new RuntimeException("Group has not found.");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -88,31 +90,35 @@ public class GroupDAO {
 				while(rSet.next()){
 					if(rSet.wasNull() == false){
 						log.log(Level.FINE, "Group "+name+" has found.");
-						Group foundGroup = new Group();
+						
 						foundGroup.name = rSet.getString(1);
 						return foundGroup;
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Group "+name+" has not found.");
-						return null;
+						throw new RuntimeException("Group has not found.");
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
-				return null;
+				throw new RuntimeException("Group has not found.");
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(rSet!=null)rSet.close();
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
-			} catch (SQLException e) {
+				if(rSet!=null){
+					rSet.close();
+				}
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
-				return null;
+				throw new RuntimeException("Group has not found.");
 			}
 		}
-		return null;
+		throw new RuntimeException("Group has not found.");
 	}
 
 	public static int getID(String name, int facultyID){
@@ -130,8 +136,7 @@ public class GroupDAO {
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return groupID;
 			}
@@ -144,23 +149,27 @@ public class GroupDAO {
 						log.log(Level.FINE, "Group "+name+" has found.");
 						groupID = rSet.getInt(1);
 						return groupID;
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Group "+name+" has not found.");
 						return groupID;
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return groupID;
 			}
-		}
-		finally{
+		}finally{
 			try {
-				if(rSet!=null)rSet.close();
-			    if(statement!=null)statement.close();
-			    if(connection!=null)connection.close();
-			} catch (SQLException e) {
+				if(rSet!=null){
+					rSet.close();
+				}
+			    if(statement!=null){
+			    	statement.close();
+			    }
+			    if(connection!=null){
+			    	connection.close();
+			    }
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return groupID;
 			}
@@ -192,8 +201,7 @@ public class GroupDAO {
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return;
 			}
@@ -212,15 +220,13 @@ public class GroupDAO {
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
 							log.log(Level.FINE, "Connection for update is established.");
-						}
-						else{
+						}else{
 							log.log(Level.WARNING, "Connection for update is not established!!!");
 							return;
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Group "+name+" has not found.");
 						return;
 					}
@@ -232,11 +238,21 @@ public class GroupDAO {
 		}
 		finally{
 			try {
-				if(statement2!=null)statement1.close();
-			    if(connection2!=null)connection1.close();
-				if(rSet1!=null)rSet1.close();
-			    if(statement1!=null)statement1.close();
-			    if(connection1!=null)connection1.close();
+				if(statement2!=null){
+					statement1.close();
+				}
+			    if(connection2!=null){
+			    	connection1.close();
+			    }
+				if(rSet1!=null){
+					rSet1.close();
+				}
+			    if(statement1!=null){
+			    	statement1.close();
+			    }
+			    if(connection1!=null){
+			    	connection1.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
@@ -269,8 +285,7 @@ public class GroupDAO {
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
 				log.log(Level.FINE, "Connection is established.");
-			}
-			else{
+			}else{
 				log.log(Level.WARNING, "Connection is not established!!!");
 				return;
 			}
@@ -287,8 +302,7 @@ public class GroupDAO {
 						if(n==1){
 							log.log(Level.FINE, "Group "+name+" wasn't deleted!");
 							return;
-						}
-						else{
+						}else{
 							log.log(Level.FINE, "Group "+name+" deleted");
 						}
 						
@@ -297,31 +311,39 @@ public class GroupDAO {
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
 							log.log(Level.FINE, "Connection for update is established.");
-						}
-						else{
+						}else{
 							log.log(Level.WARNING, "Connection for update is not established!!!");
 							return;
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
-					}
-					else{
+					}else{
 						log.log(Level.FINE, "Group "+name+" has not found.");
 						return;
 					}
 				}
-			} catch (SQLException e) {
+			}catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
 			}
 		}
 		finally{
 			try {
-				if(statement2!=null)statement1.close();
-			    if(connection2!=null)connection1.close();
-				if(rSet1!=null)rSet1.close();
-			    if(statement1!=null)statement1.close();
-			    if(connection1!=null)connection1.close();
+				if(statement2!=null){
+					statement1.close();
+				}
+			    if(connection2!=null){
+			    	connection1.close();
+			    }
+				if(rSet1!=null){
+					rSet1.close();
+				}
+			    if(statement1!=null){
+			    	statement1.close();
+			    }
+			    if(connection1!=null){
+			    	connection1.close();
+			    }
 			} catch (SQLException e) {
 				log.log(Level.WARNING, e.getMessage());
 				return;
