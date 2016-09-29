@@ -13,17 +13,17 @@ public class FacultyDAO {
 
 private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 	
-	public static void craete(String name){
+	public static void craete(String name) throws DAOException{
 	
 		//Check for the same faculty in DB
 		Faculty facultyInDB = getFaculty(name);
 		if(facultyInDB != null){
-			int n = JOptionPane.showConfirmDialog(null, "Do you want to add the same faculty?", "This faculty already exists!!!", JOptionPane.YES_NO_OPTION);
+			int n = JOptionPane.showConfirmDialog(null, "Do you want to add the same faculty?", "This faculty already exists!", JOptionPane.YES_NO_OPTION);
 			if(n==1){
-				log.log(Level.FINE, "Faculty "+name+" wasn't created! This faculty already exists!!!");
+				log.log(Level.INFO, "Faculty "+name+" wasn't created! This faculty already exists!");
 				return;
-			}else{
-				log.log(Level.FINE, "Faculty "+name+" was created! The same faculty added!");
+			} else {
+				log.log(Level.INFO, "Faculty "+name+" was created! The same faculty added!");
 			}
 		}
 
@@ -35,18 +35,18 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
         try{
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
 				statement.setString(1, name);
 				statement.executeUpdate();
 								
-				log.log(Level.FINE, "New faculty "+name+" added to DB");
+				log.log(Level.INFO, "New faculty "+name+" added to DB");
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 			}
 		}finally{
 			try {
@@ -57,12 +57,12 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    	connection.close();
 			    }
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 			}
 		}
 	}
 	
-	public static Faculty getFaculty(String name){
+	public static Faculty getFaculty(String name) throws DAOException{
 		
 		Faculty foundFaculty = new Faculty();
 		
@@ -77,10 +77,10 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		try{
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
-				throw new RuntimeException("Faculty has not found.");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
+				throw new DAOException("Connection is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -88,18 +88,18 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				
 				while(rSet.next()){
 					if(rSet.wasNull() == false){
-						log.log(Level.FINE, "Faculty "+name+" has found.");
+						log.log(Level.INFO, "Faculty "+name+" has found.");
 						
 						foundFaculty.name = rSet.getString(1);
 						return foundFaculty;
-					}else{
-						log.log(Level.FINE, "Faculty "+name+" has not found.");
-						throw new RuntimeException("Faculty has not found.");
+					} else {
+						log.log(Level.INFO, "Faculty "+name+" has not found.");
+						throw new DAOException("Faculty has not found.");
 					}
 				}
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
-				throw new RuntimeException("Faculty has not found.");
+				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Faculty has not found.");
 			}
 		}finally{
 			try {
@@ -113,11 +113,11 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    	connection.close();
 			    }
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
-				throw new RuntimeException("Faculty has not found.");
+				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Faculty has not found.");
 			}
 		}
-		throw new RuntimeException("Faculty has not found.");
+		throw new DAOException("Faculty has not found.");
 	}
 
 	public static int getID(String name){
@@ -135,9 +135,9 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		try{
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 				return facultyID;
 			}
 			try {
@@ -146,15 +146,15 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				
 				while(rSet.next()){
 					if(rSet.wasNull() == false){
-						log.log(Level.FINE, "Faculty "+name+" has found.");
+						log.log(Level.INFO, "Faculty "+name+" has found.");
 						facultyID = rSet.getInt(1);
-					}else{
-						log.log(Level.FINE, "Faculty "+name+" has not found.");
+					} else {
+						log.log(Level.INFO, "Faculty "+name+" has not found.");
 						return facultyID;
 					}
 				}
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return facultyID;
 			}
 		}finally{
@@ -169,19 +169,19 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    	connection.close();
 			    }
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return facultyID;
 			}
 		}
 		return facultyID;
 	}
 
-	public static void edit(String name, String newName){
+	public static void edit(String name, String newName) throws DAOException{
 
 		//Check for faculty in DB
 		Faculty facultyInDB = getFaculty(name);
 		if(facultyInDB == null){
-			log.log(Level.FINE, "Faculty "+name+" doesn't exist in DB!");
+			log.log(Level.INFO, "Faculty "+name+" doesn't exist in DB!");
 			return;
 		}
 		
@@ -199,9 +199,9 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		try{
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 				return;
 			}
 			try {
@@ -210,27 +210,27 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				
 				while(rSet1.next()){
 					if(rSet1.wasNull() == false){
-						log.log(Level.FINE, "Faculty "+name+" has found.");
+						log.log(Level.INFO, "Faculty "+name+" has found.");
 						int facultyID = rSet1.getInt(1);
 						String sql2 = "UPDATE faculties "
 									+ "SET  name='"+newName+"', "
 									+ "WHERE facultyID='"+facultyID+"'";
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
-							log.log(Level.FINE, "Connection for update is established.");
-						}else{
-							log.log(Level.WARNING, "Connection for update is not established!!!");
+							log.log(Level.INFO, "Connection for update is established.");
+						} else {
+							log.log(Level.SEVERE, "Connection for update is not established!");
 							return;
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
-					}else{
-						log.log(Level.FINE, "Faculty "+name+" has not found.");
+					} else {
+						log.log(Level.INFO, "Faculty "+name+" has not found.");
 						return;
 					}
 				}
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}finally{
@@ -251,19 +251,19 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    	connection1.close();
 			    }
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}
 		
 	}
 
-	public static void delete(String name){
+	public static void delete(String name) throws DAOException{
 		
 		//Check for faculty in DB
 		Faculty facultyInDB = getFaculty(name);
 		if(facultyInDB == null){
-			log.log(Level.FINE, "Faculty "+name+" doesn't exist in DB!");
+			log.log(Level.INFO, "Faculty "+name+" doesn't exist in DB!");
 			return;
 		}
 				
@@ -280,9 +280,9 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		try{
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 				return;
 			}
 			try {
@@ -291,35 +291,35 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				
 				while(rSet1.next()){
 					if(rSet1.wasNull() == false){
-						log.log(Level.FINE, "Faculty "+name+" has found.");
+						log.log(Level.INFO, "Faculty "+name+" has found.");
 
 						//Control question									
-						int n = JOptionPane.showConfirmDialog(null, "Do you want to delete faculty?", "This faculty exists!!!", JOptionPane.YES_NO_OPTION);
+						int n = JOptionPane.showConfirmDialog(null, "Do you want to delete faculty?", "This faculty exists!", JOptionPane.YES_NO_OPTION);
 						if(n==1){
-							log.log(Level.FINE, "Faculty "+name+" wasn't deleted!");
+							log.log(Level.INFO, "Faculty "+name+" wasn't deleted!");
 							return;
-						}else{
-							log.log(Level.FINE, "Faculty "+name+" deleted");
+						} else {
+							log.log(Level.INFO, "Faculty "+name+" deleted");
 						}
 						
 						int facultyID = rSet1.getInt(1);
 						String sql2 = "DELETE FROM faculties WHERE facultyID='"+facultyID+"'";
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
-							log.log(Level.FINE, "Connection for update is established.");
-						}else{
-							log.log(Level.WARNING, "Connection for update is not established!!!");
+							log.log(Level.INFO, "Connection for update is established.");
+						} else {
+							log.log(Level.SEVERE, "Connection for update is not established!");
 							return;
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
-					}else{
-						log.log(Level.FINE, "Faculty "+name+" has not found.");
+					} else {
+						log.log(Level.INFO, "Faculty "+name+" has not found.");
 						return;
 					}
 				}
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}finally{
@@ -340,7 +340,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    	connection1.close();
 			    }
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}							

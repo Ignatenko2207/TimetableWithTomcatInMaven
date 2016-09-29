@@ -24,17 +24,17 @@ public class LessonDAO {
 	
 	private static Logger log = Logger.getLogger(LessonDAO.class.getName());
 	
-	public static void create(String name,int room, Calendar startOfLesson, int length, int teacherID, int groupID){
+	public static void create(String name,int room, Calendar startOfLesson, int length, int teacherID, int groupID) throws DAOException{
 		
 		Lesson lessonInDB = getLesson(name, room, startOfLesson, length);
 		
 		if(lessonInDB != null){
-			int n = JOptionPane.showConfirmDialog(null, "Do you want to add the same lesson?", "This lesson already exists!!!", JOptionPane.YES_NO_OPTION);
+			int n = JOptionPane.showConfirmDialog(null, "Do you want to add the same lesson?", "This lesson already exists!", JOptionPane.YES_NO_OPTION);
 			if(n==1){
-				log.log(Level.FINE, "Lesson "+name+" wasn't created! This lesson already exists!!!");
+				log.log(Level.INFO, "Lesson "+name+" wasn't created! This lesson already exists!");
 				return;
-			}else{
-				log.log(Level.FINE, "Lesson "+name+" was created! The same lesson added!");
+			} else {
+				log.log(Level.INFO, "Lesson "+name+" was created! The same lesson added!");
 			}
 		}	
 		Connection connection = null;
@@ -49,9 +49,9 @@ public class LessonDAO {
         try{
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -63,9 +63,9 @@ public class LessonDAO {
 				statement.setInt(6, teacherID);
 				statement.executeUpdate();
 								
-				log.log(Level.FINE, "New lesson "+name+" added to DB");
+				log.log(Level.INFO, "New lesson "+name+" added to DB");
 			} catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 			}
 		}
 		finally{
@@ -77,12 +77,12 @@ public class LessonDAO {
 			    	connection.close();
 			    }
 			} catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 			}
 		}
 	}
 	
-	public static Lesson getLesson(String name, int room, Calendar startOfLesson, int length){
+	public static Lesson getLesson(String name, int room, Calendar startOfLesson, int length) throws DAOException{
 		
 		Lesson foundLesson = new Lesson(); 
 		
@@ -99,10 +99,10 @@ public class LessonDAO {
 		try{
 			connection = ConnectionToDB.getConnectionToDB();
 			if(connection != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
-				throw new RuntimeException("Lesson has not found.");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
+				throw new DAOException("Lesson has not found.");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -111,25 +111,25 @@ public class LessonDAO {
 				while(rSet.next()){
 					if(rSet.getTimestamp(3).equals(timeToDB)){
 						if(rSet.getInt(4) == length){
-							log.log(Level.FINE, "Lesson "+name+" has found.");
+							log.log(Level.INFO, "Lesson "+name+" has found.");
 							
 							foundLesson.name = rSet.getString(1);
 							foundLesson.room = rSet.getInt(2);
 							foundLesson.startOfLesson = startOfLesson;
 							foundLesson.durationOfLesson = rSet.getInt(4);
 							return foundLesson;		
-						}else{
-							log.log(Level.FINE, "Lesson "+name+" has not found.");
-							throw new RuntimeException("Lesson has not found.");
+						} else {
+							log.log(Level.INFO, "Lesson "+name+" has not found.");
+							throw new DAOException("Lesson has not found.");
 						}
-					}else{
-						log.log(Level.FINE, "Lesson "+name+" has not found.");
-						throw new RuntimeException("Lesson has not found.");
+					} else {
+						log.log(Level.INFO, "Lesson "+name+" has not found.");
+						throw new DAOException("Lesson has not found.");
 					}
 				}
 			} catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
-				throw new RuntimeException("Lesson has not found.");
+				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Lesson has not found.");
 			}
 		}finally{
 			try {
@@ -143,20 +143,21 @@ public class LessonDAO {
 			    	connection.close();
 			    }
 			} catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
-				throw new RuntimeException("Lesson has not found.");
+				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Lesson has not found.");
 			}
 		}
-		throw new RuntimeException("Lesson has not found.");
+		throw new DAOException("Lesson has not found.");
 	}
 	
-	public static void edit(String name, int room, Calendar startOfLesson, int length, int teacherID, int groupID, String newName, int newRoom, Calendar newStartOfLesson, int newLength, int newTeacherID, int newGroupID){
+	public static void edit(String name, int room, Calendar startOfLesson, int length, int teacherID, int groupID, 
+							String newName, int newRoom, Calendar newStartOfLesson, int newLength, int newTeacherID, int newGroupID) throws DAOException{
 		
 		//Check for lesson in DB
 		Lesson lessonInDB = getLesson(name, room, startOfLesson, length);
 		if(lessonInDB == null){
 			System.out.println("Lesson has not found!");
-			log.log(Level.FINE, "Lesson "+name+" doesn't exist in DB!");
+			log.log(Level.INFO, "Lesson "+name+" doesn't exist in DB!");
 			return;
 		}
 			
@@ -175,9 +176,9 @@ public class LessonDAO {
 		try{
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 				return;
 			}
 			try {
@@ -189,7 +190,7 @@ public class LessonDAO {
 						if(rSet1.getInt(5) == length){
 							if(rSet1.getInt(6) == teacherID){
 								if(rSet1.getInt(7) == groupID){
-									log.log(Level.FINE, "Lesson "+name+" has found.");
+									log.log(Level.INFO, "Lesson "+name+" has found.");
 									int lessonID = rSet1.getInt(1);
 								
 									Timestamp timeToDB2 = getTimestampFromCalendar(newStartOfLesson);
@@ -205,32 +206,32 @@ public class LessonDAO {
 									
 									connection2 = ConnectionToDB.getConnectionToDB();
 									if(connection2 != null){
-										log.log(Level.FINE, "Connection for update is established.");
-									}else{
-										log.log(Level.WARNING, "Connection for update is not established!!!");
+										log.log(Level.INFO, "Connection for update is established.");
+									} else {
+										log.log(Level.SEVERE, "Connection for update is not established!");
 										return;
 									}
 									statement2 = connection2.prepareStatement(sql2);
 									statement2.executeUpdate();
-								}else{
-									log.log(Level.FINE, "Lesson "+name+" has not found.");
+								} else {
+									log.log(Level.INFO, "Lesson "+name+" has not found.");
 									return;
 								}
-							}else{
-								log.log(Level.FINE, "Lesson "+name+" has not found.");
+							} else {
+								log.log(Level.INFO, "Lesson "+name+" has not found.");
 								return;
 							}
-						}else{
-							log.log(Level.FINE, "Lesson "+name+" has not found.");
+						} else {
+							log.log(Level.INFO, "Lesson "+name+" has not found.");
 							return;
 						}
-					}else{
-						log.log(Level.FINE, "Lesson "+name+" has not found.");
+					} else {
+						log.log(Level.INFO, "Lesson "+name+" has not found.");
 						return;
 					}
 				}
 			}catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}finally{
@@ -251,19 +252,19 @@ public class LessonDAO {
 			    	connection1.close();
 			    }
 			} catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}
 
 	}
 
-	public static void delete(String name, int room, Calendar startOfLesson, int length, int teacherID, int groupID){
+	public static void delete(String name, int room, Calendar startOfLesson, int length, int teacherID, int groupID) throws DAOException{
 		//Check for lesson in DB
 		Lesson lessonInDB = getLesson(name, room, startOfLesson, length);
 		if(lessonInDB == null){
 			System.out.println("Lesson has not found!");
-			log.log(Level.FINE, "Lesson "+name+" doesn't exist in DB!");
+			log.log(Level.INFO, "Lesson "+name+" doesn't exist in DB!");
 			return;
 		}
 			
@@ -282,9 +283,9 @@ public class LessonDAO {
 		try{
 			connection1 = ConnectionToDB.getConnectionToDB();
 			if(connection1 != null){
-				log.log(Level.FINE, "Connection is established.");
-			}else{
-				log.log(Level.WARNING, "Connection is not established!!!");
+				log.log(Level.INFO, "Connection is established.");
+			} else {
+				log.log(Level.SEVERE, "Connection is not established!");
 				return;
 			}
 			try {
@@ -296,15 +297,15 @@ public class LessonDAO {
 						if(rSet1.getInt(5) == length){
 							if(rSet1.getInt(6) == teacherID){
 								if(rSet1.getInt(7) == groupID){
-									log.log(Level.FINE, "Lesson "+name+" has found.");
+									log.log(Level.INFO, "Lesson "+name+" has found.");
 							
 									//Control question									
-									int n = JOptionPane.showConfirmDialog(null, "Do you want to delete lesson?", "This lesson exists!!!", JOptionPane.YES_NO_OPTION);
+									int n = JOptionPane.showConfirmDialog(null, "Do you want to delete lesson?", "This lesson exists!", JOptionPane.YES_NO_OPTION);
 									if(n==1){
-									log.log(Level.FINE, "Lesson "+name+" wasn't deleted!");
+									log.log(Level.INFO, "Lesson "+name+" wasn't deleted!");
 									return;
-								}else{
-									log.log(Level.FINE, "Lesson "+name+" deleted");
+								} else {
+									log.log(Level.INFO, "Lesson "+name+" deleted");
 								}
 								int lessonID = rSet1.getInt(1);
 												
@@ -313,32 +314,32 @@ public class LessonDAO {
 								
 								connection2 = ConnectionToDB.getConnectionToDB();
 								if(connection2 != null){
-									log.log(Level.FINE, "Connection for update is established.");
-								}else{
-									log.log(Level.WARNING, "Connection for update is not established!!!");
+									log.log(Level.INFO, "Connection for update is established.");
+								} else {
+									log.log(Level.SEVERE, "Connection for update is not established!");
 									return;
 								}
 								statement2 = connection2.prepareStatement(sql2);
 								statement2.executeUpdate();
-							}else{
-								log.log(Level.FINE, "Lesson "+name+" has not found.");
+							} else {
+								log.log(Level.INFO, "Lesson "+name+" has not found.");
 								return;
 							}
-						}else{
-							log.log(Level.FINE, "Lesson "+name+" has not found.");
+						} else {
+							log.log(Level.INFO, "Lesson "+name+" has not found.");
 							return;
 						}
-					}else{
-						log.log(Level.FINE, "Lesson "+name+" has not found.");
+					} else {
+						log.log(Level.INFO, "Lesson "+name+" has not found.");
 						return;
 					}
-				}else{
-					log.log(Level.FINE, "Lesson "+name+" has not found.");
+				} else {
+					log.log(Level.INFO, "Lesson "+name+" has not found.");
 					return;
 				}
 			}
 		}catch (SQLException e) {
-			log.log(Level.WARNING, e.getMessage());
+			log.log(Level.SEVERE, e.getMessage());
 				return;
 		}
 	}finally{
@@ -359,7 +360,7 @@ public class LessonDAO {
 			    	connection1.close();
 			    }
 			} catch (SQLException e) {
-				log.log(Level.WARNING, e.getMessage());
+				log.log(Level.SEVERE, e.getMessage());
 				return;
 			}
 		}
