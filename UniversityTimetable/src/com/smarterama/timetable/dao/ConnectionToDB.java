@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 public class ConnectionToDB {
 	
 	static final String DBURL= "jdbc:postgresql://localhost:5432/universityDB";
@@ -24,7 +25,7 @@ public class ConnectionToDB {
 			}
 		}catch(Exception e){
 			log.log(Level.WARNING, e.getMessage());
-			throw new NullPointerException("connection = null");	
+			throw new NullPointerException("connection = null");				
 		}
 	}
 }

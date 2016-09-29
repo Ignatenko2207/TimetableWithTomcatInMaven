@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import com.smarterama.timetable.domain.Student;
 
+
 public class StudentDAO {
 	
 	private static Logger log = Logger.getLogger(StudentDAO.class.getName());

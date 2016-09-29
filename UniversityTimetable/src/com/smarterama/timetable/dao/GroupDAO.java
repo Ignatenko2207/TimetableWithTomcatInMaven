@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import com.smarterama.timetable.domain.Group;
 
+
 public class GroupDAO {
 
 	private static Logger log = Logger.getLogger(GroupDAO.class.getName());

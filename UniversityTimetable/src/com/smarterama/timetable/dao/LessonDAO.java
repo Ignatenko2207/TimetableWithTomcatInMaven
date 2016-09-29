@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import com.smarterama.timetable.domain.Lesson;
 
-
 public class LessonDAO {
 
 	/*
