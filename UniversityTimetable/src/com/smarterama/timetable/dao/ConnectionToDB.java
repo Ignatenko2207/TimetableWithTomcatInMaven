@@ -14,18 +14,18 @@ public class ConnectionToDB {
 	
 	private static Logger log = Logger.getLogger(ConnectionToDB.class.getName());
 	
-	public static Connection getConnectionToDB(){
+	public static Connection getConnectionToDB() throws DAOException{
 		Connection connection = null;
 		try{
 			connection = DriverManager.getConnection(DBURL, DBUser, DBUserPassword);
 			if(connection!=null){
 				return connection;
 			}else{
-				throw new NullPointerException("connection = null");
+				throw new DAOException("Connection is not established!");
 			}
 		}catch(Exception e){
 			log.log(Level.WARNING, e.getMessage());
-			throw new NullPointerException("connection = null");				
+			throw new DAOException("Connection is not established!");				
 		}
 	}
 }

@@ -122,7 +122,7 @@ public class GroupDAO {
 		throw new DAOException("Group has not found.");
 	}
 
-	public static int getID(String name, int facultyID){
+	public static int getID(String name, int facultyID) throws DAOException{
 		int groupID = 0;
 		
 		Connection connection = null;

@@ -121,7 +121,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		throw new DAOException("Faculty has not found.");
 	}
 
-	public static int getID(String name){
+	public static int getID(String name) throws DAOException{
 		
 		int facultyID = 0;
 		
