@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import com.smarterama.timetable.domain.Group;
 
-
 public class GroupDAO {
 
 	private static Logger log = Logger.getLogger(GroupDAO.class.getName());
@@ -49,6 +48,7 @@ public class GroupDAO {
 				log.log(Level.INFO, "New group "+name+" added to DB");
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -60,6 +60,7 @@ public class GroupDAO {
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 	}
@@ -82,7 +83,7 @@ public class GroupDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				throw new DAOException("Group has not found.");
+				throw new DAOException("Connection to get group is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -96,12 +97,12 @@ public class GroupDAO {
 						return foundGroup;
 					} else {
 						log.log(Level.INFO, "Group "+name+" has not found.");
-						throw new DAOException("Group has not found.");
+						throw new DAOException("ResultSet returned nothing.");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Group has not found.");
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -116,10 +117,10 @@ public class GroupDAO {
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Group has not found.");
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
-		throw new DAOException("Group has not found.");
+		throw new DAOException("Group was notc created.");
 	}
 
 	public static int getID(String name, int facultyID) throws DAOException{
@@ -139,7 +140,7 @@ public class GroupDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return groupID;
+				throw new DAOException("Connection to get ID is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -152,12 +153,12 @@ public class GroupDAO {
 						return groupID;
 					} else {
 						log.log(Level.INFO, "Group "+name+" has not found.");
-						return groupID;
+						throw new DAOException("ResultSet returned nothing.");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return groupID;
+				throw new DAOException("SQL request isn't correct");
 			}
 		}finally{
 			try {
@@ -172,10 +173,10 @@ public class GroupDAO {
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return groupID;
+				throw new DAOException("Finally block isn't correct");
 			}
 		}
-		return groupID;
+		throw new DAOException("ID of group "+name+" has not found.");
 	}
 
 	public static void edit(String name, int facultyID, String newName, int newFacultyID) throws DAOException{
@@ -184,7 +185,7 @@ public class GroupDAO {
 		Group groupInDB = getGroup(name);
 		if(groupInDB == null){
 			log.log(Level.INFO, "Group "+name+" doesn't exist in DB!");
-			return;
+			throw new DAOException("Group "+name+" has not found.");
 		}
 		
 		Connection connection1 = null;
@@ -204,7 +205,7 @@ public class GroupDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to edit group is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
@@ -229,12 +230,12 @@ public class GroupDAO {
 						statement2.executeUpdate();
 					} else {
 						log.log(Level.INFO, "Group "+name+" has not found.");
-						return;
+						throw new DAOException("ResultSet returned nothing");
 					}
 				}
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't correct");
 			}
 		}
 		finally{
@@ -256,7 +257,7 @@ public class GroupDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't correct");
 			}
 		}
 		
@@ -288,7 +289,7 @@ public class GroupDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to delete group is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
@@ -311,21 +312,21 @@ public class GroupDAO {
 						String sql2 = "DELETE FROM groups WHERE groupID='"+groupID+"'";
 						connection2 = ConnectionToDB.getConnectionToDB();
 						if(connection2 != null){
-							log.log(Level.INFO, "Connection for update is established.");
+							log.log(Level.INFO, "Connection for delete is established.");
 						} else {
-							log.log(Level.SEVERE, "Connection for update is not established!");
-							return;
+							log.log(Level.SEVERE, "Connection for delete is not established!");
+							throw new DAOException("Connection to delete group is not established!");
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
 					} else {
 						log.log(Level.INFO, "Group "+name+" has not found.");
-						return;
+						throw new DAOException("ResultSet returned nothing.");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}
 		finally{
@@ -347,7 +348,7 @@ public class GroupDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}							
 	}

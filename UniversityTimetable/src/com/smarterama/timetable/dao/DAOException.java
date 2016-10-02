@@ -3,7 +3,6 @@ package com.smarterama.timetable.dao;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class DAOException extends Exception{
 	
 	public DAOException(String exception){

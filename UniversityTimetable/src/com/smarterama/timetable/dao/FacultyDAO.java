@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import com.smarterama.timetable.domain.Faculty;
 
-
 public class FacultyDAO {
 
 private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
@@ -48,6 +47,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				log.log(Level.INFO, "New faculty "+name+" added to DB");
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Faculty "+name+" was not created.");
 			}
 		}finally{
 			try {
@@ -59,6 +59,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Faculty "+name+" was not created.");
 			}
 		}
 	}
@@ -81,7 +82,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				throw new DAOException("Connection is not established!");
+				throw new DAOException("Connection to get faculty is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -95,12 +96,12 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 						return foundFaculty;
 					} else {
 						log.log(Level.INFO, "Faculty "+name+" has not found.");
-						throw new DAOException("Faculty has not found.");
+						throw new DAOException("ResultSet returned nothing");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Faculty has not found.");
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -115,7 +116,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Faculty has not found.");
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 		throw new DAOException("Faculty has not found.");
@@ -139,7 +140,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return facultyID;
+				throw new DAOException("Connection to get ID is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -151,12 +152,12 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 						facultyID = rSet.getInt(1);
 					} else {
 						log.log(Level.INFO, "Faculty "+name+" has not found.");
-						return facultyID;
+						throw new DAOException("Faculty has not found.");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return facultyID;
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -171,7 +172,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return facultyID;
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 		return facultyID;
@@ -183,7 +184,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		Faculty facultyInDB = getFaculty(name);
 		if(facultyInDB == null){
 			log.log(Level.INFO, "Faculty "+name+" doesn't exist in DB!");
-			return;
+			throw new DAOException("Faculty "+name+" to edit it has not found.");
 		}
 		
 		Connection connection1 = null;
@@ -203,7 +204,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to edit faculty is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
@@ -227,12 +228,12 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 						statement2.executeUpdate();
 					} else {
 						log.log(Level.INFO, "Faculty "+name+" has not found.");
-						return;
+						throw new DAOException("ResultSet returned nothing");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -253,7 +254,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 		
@@ -265,7 +266,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 		Faculty facultyInDB = getFaculty(name);
 		if(facultyInDB == null){
 			log.log(Level.INFO, "Faculty "+name+" doesn't exist in DB!");
-			return;
+			throw new DAOException("Faculty "+name+" has not found.");
 		}
 				
 		Connection connection1 = null;
@@ -284,7 +285,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to delete faculty is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
@@ -310,18 +311,18 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 							log.log(Level.INFO, "Connection for update is established.");
 						} else {
 							log.log(Level.SEVERE, "Connection for update is not established!");
-							return;
+							throw new DAOException("Connection to delete faculty is not established!");
 						}
 						statement2 = connection2.prepareStatement(sql2);
 						statement2.executeUpdate();
 					} else {
 						log.log(Level.INFO, "Faculty "+name+" has not found.");
-						return;
+						throw new DAOException("ResultSet returned nothing.");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -342,7 +343,7 @@ private static Logger log = Logger.getLogger(FacultyDAO.class.getName());
 			    }
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}							
 	}

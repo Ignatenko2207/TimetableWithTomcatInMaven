@@ -51,6 +51,7 @@ public class LessonDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
+				throw new DAOException("Connection to create lesson is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -65,6 +66,7 @@ public class LessonDAO {
 				log.log(Level.INFO, "New lesson "+name+" added to DB");
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}
 		finally{
@@ -77,6 +79,7 @@ public class LessonDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 	}
@@ -84,11 +87,9 @@ public class LessonDAO {
 	public static Lesson getLesson(String name, int room, Calendar startOfLesson, int length) throws DAOException{
 		
 		Lesson foundLesson = new Lesson(); 
-		
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet rSet = null;
-			
 		Timestamp timeToDB = getTimestampFromCalendar(startOfLesson);
 		
 		String sql = "SELECT name, room, startOfLesson, duration "
@@ -101,7 +102,7 @@ public class LessonDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				throw new DAOException("Lesson has not found.");
+				throw new DAOException("Connection to get lesson is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -123,12 +124,12 @@ public class LessonDAO {
 						}
 					} else {
 						log.log(Level.INFO, "Lesson "+name+" has not found.");
-						throw new DAOException("Lesson has not found.");
+						throw new DAOException("ResultSet returned nothing.");
 					}
 				}
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Lesson has not found.");
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -143,10 +144,10 @@ public class LessonDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Lesson has not found.");
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
-		throw new DAOException("Lesson has not found.");
+		throw new DAOException("Lesson "+name+" has not found.");
 	}
 	
 	public static void edit(String name, int room, Calendar startOfLesson, int length, int teacherID, int groupID, 
@@ -178,7 +179,7 @@ public class LessonDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to edit lesson is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
@@ -208,30 +209,29 @@ public class LessonDAO {
 										log.log(Level.INFO, "Connection for update is established.");
 									} else {
 										log.log(Level.SEVERE, "Connection for update is not established!");
-										return;
+										throw new DAOException("Connection to edit lesson is not established!");
 									}
 									statement2 = connection2.prepareStatement(sql2);
 									statement2.executeUpdate();
 								} else {
-									log.log(Level.INFO, "Lesson "+name+" has not found.");
-									return;
-								}
+									log.log(Level.INFO, "Group ID in lesson "+name+" does not match.");
+									return;								}
 							} else {
-								log.log(Level.INFO, "Lesson "+name+" has not found.");
+								log.log(Level.INFO, "Teacher ID in lesson "+name+" does not match.");
 								return;
 							}
 						} else {
-							log.log(Level.INFO, "Lesson "+name+" has not found.");
+							log.log(Level.INFO, "Duration of lesson "+name+" does not match.");
 							return;
 						}
 					} else {
-						log.log(Level.INFO, "Lesson "+name+" has not found.");
+						log.log(Level.INFO, "Room of lesson "+name+" does not match.");
 						return;
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't corect.");
 			}
 		}finally{
 			try {
@@ -252,7 +252,7 @@ public class LessonDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't corect.");
 			}
 		}
 
@@ -285,7 +285,7 @@ public class LessonDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to delete lesson is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
@@ -301,47 +301,46 @@ public class LessonDAO {
 									//Control question									
 									int n = JOptionPane.showConfirmDialog(null, "Do you want to delete lesson?", "This lesson exists!", JOptionPane.YES_NO_OPTION);
 									if(n==1){
-									log.log(Level.INFO, "Lesson "+name+" wasn't deleted!");
-									return;
-								} else {
-									log.log(Level.INFO, "Lesson "+name+" deleted");
-								}
-								int lessonID = rSet1.getInt(1);
+										log.log(Level.INFO, "Lesson "+name+" wasn't deleted!");
+										return;
+									} else {
+										log.log(Level.INFO, "Lesson "+name+" deleted");
+									}
+									int lessonID = rSet1.getInt(1);
 												
-								String sql2 = "DELETE FROM lessons "
+									String sql2 = "DELETE FROM lessons "
 											+ "WHERE lessonID='"+lessonID+"'";
 								
-								connection2 = ConnectionToDB.getConnectionToDB();
-								if(connection2 != null){
-									log.log(Level.INFO, "Connection for update is established.");
+									connection2 = ConnectionToDB.getConnectionToDB();
+									if(connection2 != null){
+										log.log(Level.INFO, "Connection for update is established.");
+									} else {
+										log.log(Level.SEVERE, "Connection for update is not established!");
+										throw new DAOException("Connection to delete lesson is not established!");
+									}
+									statement2 = connection2.prepareStatement(sql2);
+									statement2.executeUpdate();
 								} else {
-									log.log(Level.SEVERE, "Connection for update is not established!");
-									return;
-								}
-								statement2 = connection2.prepareStatement(sql2);
-								statement2.executeUpdate();
+									log.log(Level.INFO, "Group ID in lesson "+name+" does not match.");
+									return;								}
 							} else {
-								log.log(Level.INFO, "Lesson "+name+" has not found.");
+								log.log(Level.INFO, "Teacher ID in lesson "+name+" does not match.");
 								return;
 							}
 						} else {
-							log.log(Level.INFO, "Lesson "+name+" has not found.");
+							log.log(Level.INFO, "Duration of lesson "+name+" does not match.");
 							return;
 						}
 					} else {
-						log.log(Level.INFO, "Lesson "+name+" has not found.");
+						log.log(Level.INFO, "Room of lesson "+name+" does not match.");
 						return;
 					}
-				} else {
-					log.log(Level.INFO, "Lesson "+name+" has not found.");
-					return;
 				}
+			}catch (SQLException e) {
+				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("SQL request isn't corect.");
 			}
-		}catch (SQLException e) {
-			log.log(Level.SEVERE, e.getMessage());
-				return;
-		}
-	}finally{
+		}finally{
 			try {
 				if(statement2!=null){
 					statement1.close();
@@ -360,7 +359,7 @@ public class LessonDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't corect.");
 			}
 		}
 	}

@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 
 import com.smarterama.timetable.domain.Teacher;
 
-
 public class TeacherDAO {
 	
 	private static Logger log = Logger.getLogger(TeacherDAO.class.getName());
@@ -25,12 +24,9 @@ public class TeacherDAO {
 			} else {
 				log.log(Level.INFO, "Teacher "+surname+" was created! The same teacher added!");
 			}
-			
 		}
-		
 		Connection connection = null;
 		PreparedStatement statement = null;
-		
 		Long timeInMillis = date.getTimeInMillis();
 		Timestamp dateToDB = new Timestamp(timeInMillis);
 				
@@ -42,6 +38,7 @@ public class TeacherDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
+				throw new DAOException("Connection to create is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
@@ -54,7 +51,8 @@ public class TeacherDAO {
 				log.log(Level.INFO, "New teacher "+name+" "+surname+" added to DB");
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-			}
+				throw new DAOException("SQL request isn't correct");
+		}
 		}finally{
 			try {
 			    if(statement!=null){
@@ -65,6 +63,7 @@ public class TeacherDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
+				throw new DAOException("Finally block isn't correct");
 			}
 		}
 	}
@@ -72,11 +71,9 @@ public class TeacherDAO {
 	public static Teacher getTeacher(String name, String surname, Calendar date, String degree) throws DAOException{
 		
 		Teacher foundTeacher = new Teacher(); 
-		
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet rSet = null;
-			
 		Timestamp dateToDB = getTimestampFromCalendar(date);
 		
 		String sql = "SELECT name, surname, dateofbirth, academicdegree "
@@ -90,12 +87,11 @@ public class TeacherDAO {
 			}
 			 else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				throw new DAOException("Teacher has not found.");
+				throw new DAOException("Connection to get is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
 				rSet = statement.executeQuery();
-				
 				while(rSet.next()){
 					if(rSet.getString(1).equals(name)){
 						if(rSet.getString(4).equals(degree)){
@@ -106,17 +102,17 @@ public class TeacherDAO {
 							foundTeacher.academicDegree = rSet.getString(4);
 							return foundTeacher;
 						} else {
-							log.log(Level.INFO, "Teacher "+surname+" has not found.");
-							throw new DAOException("Teacher has not found.");
+							log.log(Level.INFO, "Degree of teacher "+surname+" does not match.");
+							throw new DAOException("Degree of teacher "+surname+" does not match.");
 						}
 					} else {
-						log.log(Level.INFO, "Teacher "+surname+" has not found.");
-						throw new DAOException("Teacher has not found.");
+						log.log(Level.INFO, "Name of teacher "+surname+" does not match.");
+						throw new DAOException("Name of teacher "+surname+" does not match.");
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Teacher has not found.");
+				throw new DAOException("SQL request isn't correct");
 			}
 		}finally{
 			try {
@@ -131,7 +127,7 @@ public class TeacherDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				throw new DAOException("Teacher has not found.");
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 		throw new DAOException("Teacher has not found.");
@@ -140,18 +136,15 @@ public class TeacherDAO {
 	public static int getID(String name, String surname, Calendar date, String degree) throws DAOException{
 		
 		int teacherID=0;
-		
 		//Check for teacher in DB
 		Teacher teacherInDB = getTeacher(name, surname, date, degree);
 		if(teacherInDB == null){
 			log.log(Level.INFO, "Teacher "+name+" "+surname+" doesn't exist in DB!");
 			return teacherID;
 		}
-		
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet rSet = null;
-		
 		Long timeInMillis = date.getTimeInMillis();
 		Timestamp dateToDB = new Timestamp(timeInMillis);
 		
@@ -165,12 +158,11 @@ public class TeacherDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return teacherID;
+				throw new DAOException("Connection to get ID is not established!");
 			}
 			try {
 				statement = connection.prepareStatement(sql);
 				rSet = statement.executeQuery();
-				
 				while(rSet.next()){
 					if(rSet.getString(2).equals(name)){
 						if(rSet.getString(5).equals(degree)){
@@ -178,17 +170,17 @@ public class TeacherDAO {
 							teacherID = rSet.getInt(1);
 							return teacherID;					
 						} else {
-							log.log(Level.INFO, "Teacher "+surname+" has not found.");
+							log.log(Level.INFO, "Degree of teacher "+surname+" does not match.");
 							return teacherID;
 						}
 					} else {
-						log.log(Level.INFO, "Teacher "+surname+" has not found.");
+						log.log(Level.INFO, "Name of teacher "+surname+" does not match.");
 						return teacherID;
 					}
 				}
 			}catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return teacherID;
+				throw new DAOException("SQL request isn't correct");
 			}
 		}finally{
 			try {
@@ -203,7 +195,7 @@ public class TeacherDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return teacherID;
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 		return teacherID;
@@ -218,14 +210,11 @@ public class TeacherDAO {
 			log.log(Level.INFO, "Teacher "+name+" "+surname+" doesn't exist in DB!");
 			return;
 		}
-		
 		Connection connection1 = null;
 		PreparedStatement statement1 = null;
 		ResultSet rSet1 = null;
-		
 		Connection connection2 = null;
 		PreparedStatement statement2 = null;
-		
 		Long timeInMillis1 = date.getTimeInMillis();
 		Timestamp dateToDB1 = new Timestamp(timeInMillis1);
 
@@ -239,18 +228,16 @@ public class TeacherDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to edit is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
 				rSet1 = statement1.executeQuery();
-				
 				while(rSet1.next()){
 					if(rSet1.getString(2).equals(name)){
 						if(rSet1.getString(5).equals(degree)){
 							log.log(Level.INFO, "Teacher "+surname+" has found.");
 							int teacherID = rSet1.getInt(1);
-							
 							Timestamp dateToDB2 = getTimestampFromCalendar(newDate);
 							
 							String sql2 = "UPDATE teachers "
@@ -265,24 +252,22 @@ public class TeacherDAO {
 								log.log(Level.INFO, "Connection for update is established.");
 							} else {
 								log.log(Level.SEVERE, "Connection for update is not established!");
-								return;
+								throw new DAOException("Connection to edit is not established!");
 							}
 							statement2 = connection2.prepareStatement(sql2);
 							statement2.executeUpdate();
-							
-							
 						} else {
-							log.log(Level.INFO, "Teacher "+surname+" has not found.");
+							log.log(Level.INFO, "Degree of teacher "+surname+" does not match.");
 							return;
 						}
 					} else {
-						log.log(Level.INFO, "Teacher "+surname+" has not found.");
+						log.log(Level.INFO, "Name of teacher "+surname+" does not match.");
 						return;
 					}
 				}
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't correct");
 			}
 		}finally{
 			try {
@@ -303,7 +288,7 @@ public class TeacherDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't correct");
 			}
 		}
 	}
@@ -316,14 +301,11 @@ public class TeacherDAO {
 			log.log(Level.INFO, "Teacher "+name+" "+surname+" doesn't exist in DB!");
 			return;
 		}
-		
 		Connection connection1 = null;
 		PreparedStatement statement1 = null;
 		ResultSet rSet1 = null;
-			
 		Connection connection2 = null;
 		PreparedStatement statement2 = null;
-			
 		Long timeInMillis1 = date.getTimeInMillis();
 		Timestamp dateToDB1 = new Timestamp(timeInMillis1);
 
@@ -337,18 +319,16 @@ public class TeacherDAO {
 				log.log(Level.INFO, "Connection is established.");
 			} else {
 				log.log(Level.SEVERE, "Connection is not established!");
-				return;
+				throw new DAOException("Connection to delete is not established!");
 			}
 			try {
 				statement1 = connection1.prepareStatement(sql1);
 				rSet1 = statement1.executeQuery();
-				
 				while(rSet1.next()){
 					if(rSet1.getString(2).equals(name)){
 						if(rSet1.getString(5).equals(degree)){
 							log.log(Level.INFO, "Teacher "+surname+" has found.");
 							int teacherID = rSet1.getInt(1);
-							
 							//Control question									
 							int n = JOptionPane.showConfirmDialog(null, "Do you want to delete teacher?", "This teacher exists!", JOptionPane.YES_NO_OPTION);
 							if(n==1){
@@ -357,30 +337,31 @@ public class TeacherDAO {
 							} else {
 								log.log(Level.INFO, "Teacher "+surname+" deleted");
 							}
-									
-							String sql2 = "DELETE FROM teachers WHERE teacherid='"+teacherID+"'";
+							
+							String sql2 = "DELETE FROM teachers "
+										+ "WHERE teacherid='"+teacherID+"'";
 								
 							connection2 = ConnectionToDB.getConnectionToDB();
 							if(connection2 != null){
-								log.log(Level.INFO, "Connection for update is established.");
+								log.log(Level.INFO, "Connection is established.");
 							} else {
-								log.log(Level.SEVERE, "Connection for update is not established!");
-								return;
+								log.log(Level.SEVERE, "Connection is not established!");
+								throw new DAOException("Connection to delete is not established!");
 							}
 							statement2 = connection2.prepareStatement(sql2);
 							statement2.executeUpdate();
 						} else {
-							log.log(Level.INFO, "Teacher "+surname+" has not found.");
+							log.log(Level.INFO, "Degree of teacher "+surname+" does not match.");
 							return;
 						}
 					} else {
-						log.log(Level.INFO, "Teacher "+surname+" has not found.");
+						log.log(Level.INFO, "Name of teacher "+surname+" does not match.");
 						return;
 					}
 				}
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("SQL request isn't correct.");
 			}
 		}finally{
 			try {
@@ -401,7 +382,7 @@ public class TeacherDAO {
 			    }
 			} catch (SQLException e) {
 				log.log(Level.SEVERE, e.getMessage());
-				return;
+				throw new DAOException("Finally block isn't correct.");
 			}
 		}
 	}

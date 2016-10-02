@@ -24,7 +24,7 @@ public class ConnectionToDB {
 				throw new DAOException("Connection is not established!");
 			}
 		}catch(Exception e){
-			log.log(Level.WARNING, e.getMessage());
+			log.log(Level.SEVERE, e.getMessage());
 			throw new DAOException("Connection is not established!");				
 		}
 	}
